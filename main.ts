@@ -7,6 +7,7 @@ enum ActionKind {
 }
 namespace SpriteKind {
     export const Letter = SpriteKind.create()
+    export const menu_center = SpriteKind.create()
 }
 function Lettersmenu () {
     Letter_D = sprites.create(img`
@@ -81,6 +82,24 @@ function Lettersmenu () {
         f 1 1 1 1 1 1 f 1 1 1 1 1 1 1 f 
         f f f f f f f f f f f f f f f f 
         `, SpriteKind.Letter)
+    MenuCenterLOck = sprites.create(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . c . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, SpriteKind.menu_center)
 }
 function BackroundMenu () {
     scene.setBackgroundColor(12)
@@ -99,6 +118,8 @@ controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
         LettersDestroy()
         BackroundGame()
         menu = 0
+        Selected_text = 0
+        Gameisrunning = 1
     } else if (Selected_text == 2) {
         game.splash("Settings is not working", "This is a test message")
     }
@@ -190,6 +211,7 @@ controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
     }
 })
 function menuplayercontrols () {
+    scene.centerCameraAt(75, 50)
     if (Selected_text == 1) {
         Playtext2.setImage(img`
             . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
@@ -270,10 +292,7 @@ function menuplayercontrols () {
 }
 info.onLifeZero(function () {
     Player1.destroy()
-    Kill_enemies()
-    Lettersmenu()
-    Settingstext()
-    LettersmenuPosition()
+    Gameisrunning = 2
 })
 function LettersDestroy () {
     Letter_D.destroy()
@@ -338,6 +357,7 @@ function LettersmenuPosition () {
     Letter_i.setPosition(22, 10)
     Letter_A.setPosition(34, 10)
     Letter_N.setPosition(50, 10)
+    MenuCenterLOck.setPosition(75, 50)
 }
 let Enemy_normal_speed = 0
 let Playtext2: Sprite = null
@@ -346,6 +366,8 @@ let Settingtext: Sprite = null
 let Player1: Sprite = null
 let Enemy_normal: Sprite = null
 let EnemyCount = 0
+let Gameisrunning = 0
+let MenuCenterLOck: Sprite = null
 let Letter_N: Sprite = null
 let Letter_A: Sprite = null
 let Letter_i: Sprite = null
@@ -373,5 +395,34 @@ forever(function () {
     } else {
         Enemy_Normal()
         pause(2000)
+    }
+    if (Gameisrunning == 2) {
+        tiles.setTilemap(tiles.createTilemap(hex`1000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000`, img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, [myTiles.transparency16], TileScale.Sixteen))
+        Kill_enemies()
+        BackroundMenu()
+        Lettersmenu()
+        LettersmenuPosition()
+        Playtext()
+        Settingstext()
+        menuplayercontrols()
+        Gameisrunning = 0
+        menu = 1
     }
 })
